@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Administrasi Guru Bahasa Inggris</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --accent: #06b6d4;
+            --light: #f8fafc;
+            --dark: #0f172a;
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        .dark {
+            --primary: #818cf8;
+            --primary-dark: #6366f1;
+            --secondary: #a78bfa;
+            --accent: #22d3ee;
+            --light: #0f172a;
+            --dark: #f1f5f9;
+            --glass: rgba(15, 23, 42, 0.3);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.36);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .dark body {
+            background: linear-gradient(135deg, #1e3a8a 0%, #581c87 100%);
+        }
+
+        /* Loading Screen Styles */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            overflow: hidden;
+        }
+
+        .scanning-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background:
+                radial-gradient(circle at 20% 50%, rgba(0, 40, 80, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0, 80, 120, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(0, 60, 100, 0.25) 0%, transparent 50%);
+        }
+
+        .hologram-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                linear-gradient(90deg, transparent 98%, rgba(0, 255, 255, 0.03) 100%),
+                linear-gradient(0deg, transparent 98%, rgba(0, 255, 255, 0.03) 100%);
+            background-size: 50px 50px;
+            animation: hologram 20s infinite linear;
+            z-index: 1;
+        }
+
+        @keyframes hologram {
+            0% {
+                background-position: 0 0;
+            }
+
+            100% {
+                background-position: 50px 50px;
+            }
+        }
+
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #00ffff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px 2px #00ffff;
+            animation: float 15s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .scan-center {
+            position: relative;
+            z-index: 10;
+        }
+
+        .fingerprint-3d {
+            position: relative;
+            width: 300px;
+            height: 380px;
+            perspective: 1000px;
+        }
+
+        .fingerprint-inner {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            animation: rotate3d 20s infinite linear;
+        }
+
+        @keyframes rotate3d {
+            0% {
+                transform: rotateY(0deg) rotateX(5deg);
+            }
+
+            50% {
+                transform: rotateY(180deg) rotateX(-5deg);
+            }
+
+            100% {
+                transform: rotateY(360deg) rotateX(5deg);
+            }
+        }
+
+        .fingerprint-layer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 50% 15%, transparent 40%, rgba(0, 255, 255, 0.1) 41%, rgba(0, 255, 255, 0.1) 43%, transparent 44%),
+                radial-gradient(circle at 30% 40%, transparent 40%, rgba(0, 255, 255, 0.1) 41%, rgba(0, 255, 255, 0.1) 43%, transparent 44%),
+                radial-gradient(circle at 70% 40%, transparent 40%, rgba(0, 255, 255, 0.1) 41%, rgba(0, 255, 255, 0.1) 43%, transparent 44%),
+                radial-gradient(ellipse at 50% 70%, transparent 40%, rgba(0, 255, 255, 0.1) 41%, rgba(0, 255, 255, 0.1) 43%, transparent 44%),
+                repeating-radial-gradient(circle at 50% 50%, transparent 0, rgba(0, 255, 255, 0.05) 2px, transparent 3px);
+            background-size: 300px 380px;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.3));
+            opacity: 0.8;
+        }
+
+        .layer-1 {
+            transform: translateZ(0px);
+        }
+
+        .layer-2 {
+            transform: translateZ(10px);
+            opacity: 0.7;
+        }
+
+        .layer-3 {
+            transform: translateZ(20px);
+            opacity: 0.5;
+        }
+
+        .quantum-scanner {
+            position: absolute;
+            top: 0;
+            left: 10%;
+            width: 80%;
+            height: 100%;
+            background: linear-gradient(to bottom,
+                    transparent 0%,
+                    rgba(0, 255, 255, 0.1) 10%,
+                    rgba(0, 255, 255, 0.8) 50%,
+                    rgba(0, 255, 255, 0.1) 90%,
+                    transparent 100%);
+            border-radius: 50%;
+            box-shadow:
+                0 0 30px 8px rgba(0, 255, 255, 0.9),
+                0 0 60px 15px rgba(0, 150, 255, 0.7),
+                0 0 100px 20px rgba(0, 100, 255, 0.5);
+            animation: quantum-scan 1.5s infinite linear;
+            z-index: 15;
+        }
+
+        @keyframes quantum-scan {
+            0% {
+                top: -20%;
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                top: 120%;
+                opacity: 0;
+            }
+        }
+
+        .energy-rings {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 500px;
+            z-index: 5;
+        }
+
+        .energy-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: energy-pulse 3s infinite ease-in-out;
+        }
+
+        .ring-1 {
+            width: 350px;
+            height: 450px;
+            animation-delay: 0s;
+        }
+
+        .ring-2 {
+            width: 400px;
+            height: 500px;
+            animation-delay: 0.5s;
+        }
+
+        .ring-3 {
+            width: 450px;
+            height: 550px;
+            animation-delay: 1s;
+        }
+
+        .ring-4 {
+            width: 500px;
+            height: 600px;
+            animation-delay: 1.5s;
+        }
+
+        @keyframes energy-pulse {
+
+            0%,
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.7;
+                border-color: rgba(0, 255, 255, 0.3);
+            }
+
+            50% {
+                transform: translate(-50%, -50%) scale(1.1);
+                opacity: 0.2;
+                border-color: rgba(0, 200, 255, 0.6);
+            }
+        }
+
+        .data-stream {
+            position: absolute;
+            bottom: 20%;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            z-index: 8;
+        }
+
+        .data-byte {
+            width: 8px;
+            height: 0;
+            background: linear-gradient(to top, transparent, #00ffff, #00aaff, transparent);
+            animation: data-flow 1.5s infinite ease-in-out;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+            border-radius: 2px;
+        }
+
+        @keyframes data-flow {
+
+            0%,
+            100% {
+                height: 0;
+                opacity: 0;
+            }
+
+            50% {
+                height: 80px;
+                opacity: 1;
+            }
+        }
+
+        .scan-text {
+            position: absolute;
+            bottom: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.8rem;
+            color: #00ffff;
+            text-shadow:
+                0 0 10px #00ffff,
+                0 0 20px #00aaff,
+                0 0 30px #0088ff;
+            letter-spacing: 4px;
+            text-transform: capitalize;
+            animation: text-flicker 2s infinite alternate;
+            z-index: 20;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 100;
+        }
+
+        @keyframes text-flicker {
+
+            0%,
+            19%,
+            21%,
+            23%,
+            25%,
+            54%,
+            56%,
+            100% {
+                opacity: 1;
+                text-shadow:
+                    0 0 10px #00ffff,
+                    0 0 20px #00aaff,
+                    0 0 30px #0088ff;
+            }
+
+            20%,
+            24%,
+            55% {
+                opacity: 0.7;
+                text-shadow: none;
+            }
+        }
+
+        .quantum-dots {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 4;
+        }
+
+        .quantum-dot {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #00ffff;
+            border-radius: 50%;
+            box-shadow: 0 0 15px 3px #00ffff;
+            animation: quantum-float 8s infinite linear;
+        }
+
+        @keyframes quantum-float {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translate(var(--tx), var(--ty)) scale(0.3);
+                opacity: 0;
+            }
+        }
+
+        .time-display {
+            position: absolute;
+            top: 10%;
+            right: 10%;
+            color: #00ffff;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+            z-index: 20;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .year-3000 {
+            position: absolute;
+            top: 10%;
+            left: 10%;
+            color: #00ffff;
+            font-size: 1.5rem;
+            letter-spacing: 3px;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+            z-index: 20;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            display: none;
+        }
+
+        .glass-effect {
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+        }
+
+        .header-gradient {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        }
+
+        .card-hover {
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-radius: 20px;
+            overflow: hidden;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            background: var(--glass);
+        }
+
+        .card-hover:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .download-btn {
+            transition: all 0.4s ease;
+            border-radius: 14px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .download-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .download-btn:hover::before {
+            left: 100%;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .icon-container {
+            width: 70px;
+            height: 70px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.4s ease;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .card-hover:hover .icon-container {
+            transform: scale(1.15) rotate(5deg);
+        }
+
+        .floating {
+            animation: floating 4s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0% {
+                transform: translate(0, 0px);
+            }
+
+            50% {
+                transform: translate(0, -15px);
+            }
+
+            100% {
+                transform: translate(0, 0px);
+            }
+        }
+
+        .pulse {
+            animation: pulse 3s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 20px rgba(99, 102, 241, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
+            }
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .fade-in {
+            animation: fadeIn 1s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide-in {
+            animation: slideIn 0.8s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .theme-toggle {
+            transition: all 0.4s ease;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(30deg) scale(1.1);
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            pointer-events: none;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stats-card {
+            transition: all 0.4s ease;
+            border-radius: 20px;
+            backdrop-filter: blur(16px);
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+        }
+
+        .stats-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .glow {
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .dark .glow {
+            box-shadow: 0 0 20px rgba(129, 140, 248, 0.4);
+        }
+
+        .progress-bar {
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: width 1.5s ease-in-out;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen">
+    <!-- Loading Screen with Fingerprint Scanning Animation -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="scanning-container">
+            <div class="hologram-effect"></div>
+            <div class="particles" id="particles"></div>
+            <div class="quantum-dots" id="quantumDots"></div>
+            <div class="time-display" id="timeDisplay">Quantum Scan Active</div>
+
+            <div class="scan-center">
+                <div class="fingerprint-3d">
+                    <div class="fingerprint-inner">
+                        <div class="fingerprint-layer layer-1"></div>
+                        <div class="fingerprint-layer layer-2"></div>
+                        <div class="fingerprint-layer layer-3"></div>
+                    </div>
+                    <div class="quantum-scanner"></div>
+                </div>
+            </div>
+
+            <div class="energy-rings">
+                <div class="energy-ring ring-1"></div>
+                <div class="energy-ring ring-2"></div>
+                <div class="energy-ring ring-3"></div>
+                <div class="energy-ring ring-4"></div>
+            </div>
+
+            <div class="data-stream" id="dataStream"></div>
+
+            <div class="scan-text">Biometric is Scanning Web SMP PN Pulau Tiga</div>
+        </div>
+    </div>
+
+    <!-- Main Content (Initially Hidden) -->
+    <div id="mainContent" class="main-content">
+        <!-- Particle Background -->
+        <div id="particles-container" class="fixed inset-0 pointer-events-none z-0"></div>
+
+        <!-- Header -->
+        <header class="header-gradient text-white py-10 px-4 relative overflow-hidden">
+            <div class="absolute inset-0 bg-black opacity-10"></div>
+            <div class="container mx-auto max-w-7xl relative z-10">
+                <div class="flex flex-col md:flex-row items-center justify-between">
+                    <div class="text-center md:text-left mb-8 md:mb-0 fade-in">
+                        <h1 class="text-4xl md:text-5xl font-black mb-3">Portal Administrasi Guru</h1>
+                        <h2 class="text-xl md:text-2xl font-semibold text-blue-100 mb-4">Mata Pelajaran Bahasa Inggris
+                        </h2>
+                        <p class="text-blue-100 max-w-2xl text-lg leading-relaxed">
+                            Selamat datang di portal administrasi pembelajaran. Semua dokumen yang diperlukan tersedia
+                            untuk
+                            diunduh dengan mudah.
+                        </p>
+                    </div>
+                    <div class="flex flex-col items-center space-y-4">
+                        <div class="glass-effect p-5 text-center fade-in rounded-2xl">
+                            <div class="flex items-center justify-center space-x-4">
+                                <div class="pulse bg-white rounded-full p-4">
+                                    <i class="fas fa-download text-blue-600 text-2xl"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-lg">Unduh Dokumen</p>
+                                    <p class="text-blue-100">Klik tombol untuk mengunduh</p>
+                                </div>
+                            </div>
+                        </div>
+                        <button id="theme-toggle" class="theme-toggle text-white text-xl">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Stats Section -->
+        <section class="py-12 px-4 -mt-8 relative z-10">
+            <div class="container mx-auto max-w-7xl">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="stats-card p-8 text-center fade-in glow">
+                        <div class="text-4xl font-black gradient-text mb-3">11</div>
+                        <div class="text-gray-700 dark:text-gray-300 font-medium">Total Dokumen</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    <div class="stats-card p-8 text-center fade-in glow">
+                        <div class="text-4xl font-black gradient-text mb-3">7</div>
+                        <div class="text-gray-700 dark:text-gray-300 font-medium">Jenis Administrasi</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    <div class="stats-card p-8 text-center fade-in glow">
+                        <div class="text-4xl font-black gradient-text mb-3">4</div>
+                        <div class="text-gray-700 dark:text-gray-300 font-medium">Tingkat Kelas</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Content -->
+        <main class="py-12 px-4 relative z-10">
+            <div class="container mx-auto max-w-7xl">
+                <div class="text-center mb-16 fade-in">
+                    <h2 class="text-3xl md:text-4xl font-black text-gray-800 dark:text-white mb-6">Dokumen Administrasi
+                        <span class="gradient-text">AKREDITASI</span>
+                    </h2>
+                    <p class="text-gray-600 dark:text-gray-300 max-w-3xl mx-auto text-lg">
+                        Semua dokumen administrasi pembelajaran telah disusun sesuai dengan standar kurikulum dan dapat
+                        diunduh secara langsung.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Cards akan ditempatkan di sini dengan urutan yang sama -->
+                    <!-- Card 1 -->
+                    <div class="card-hover glass-effect fade-in">
+                        <div class="p-7">
+                            <div class="flex items-start mb-6">
+                                <div class="icon-container text-blue-500 mr-5">
+                                    <i class="fas fa-file-alt text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-800 dark:text-white">Analisis Alokasi Waktu
+                                    </h3>
+                                    <span class="badge text-blue-500 dark:text-blue-300 mt-3">Perencanaan</span>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 dark:text-gray-300 mb-6 text-sm leading-relaxed">Analisis alokasi
+                                waktu
+                                pembelajaran untuk mata pelajaran
+                                Bahasa Inggris.</p>
+                            <button
+                                class="download-btn w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white py-4 rounded-xl flex items-center justify-center font-bold text-lg">
+                                <i class="fas fa-download mr-3"></i>
+                                Unduh Dokumen
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="card-hover glass-effect fade-in">
+                        <div class="p-7">
+                            <div class="flex items-start mb-6">
+                                <div class="icon-container text-green-500 mr-5">
+                                    <i class="fas fa-calendar-alt text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-800 dark:text-white">Kalender Pendidikan</h3>
+                                    <span class="badge text-green-500 dark:text-green-300 mt-3">2025-2026</span>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 dark:text-gray-300 mb-6 text-sm leading-relaxed">Kalender pendidikan
+                                resmi Kabupaten Asmat untuk tahun
+                                ajaran 2025-2026.</p>
+                            <button
+                                class="download-btn w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white py-4 rounded-xl flex items-center justify-center font-bold text-lg">
+                                <i class="fas fa-download mr-3"></i>
+                                Unduh Dokumen
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="card-hover glass-effect fade-in">
+                        <div class="p-7">
+                            <div class="flex items-start mb-6">
+                                <div class="icon-container text-purple-500 mr-5">
+                                    <i class="fas fa-paperclip text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-800 dark:text-white">Lampiran & Bukti
+                                        Pendukung
+                                    </h3>
+                                    <span class="badge text-purple-500 dark:text-purple-300 mt-3">Dokumen
+                                        Pendukung</span>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 dark:text-gray-300 mb-6 text-sm leading-relaxed">Kumpulan lampiran
+                                dan
+                                bukti pendukung untuk administrasi
+                                pembelajaran.</p>
+                            <button
+                                class="download-btn w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white py-4 rounded-xl flex items-center justify-center font-bold text-lg">
+                                <i class="fas fa-download mr-3"></i>
+                                Unduh Dokumen
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Card 4 -->
+                    <div class="card-hover glass-effect fade-in">
+                        <div class="p-7">
+                            <div class="flex items-start mb-6">
+                                <div class="icon-container text-yellow-500 mr-5">
+                                    <i class="fas fa-chart-bar text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-800 dark:text-white">Nilai Bahasa Inggris
+                                    </h3>
+                                    <span class="badge text-yellow-500 dark:text-yellow-300 mt-3">Kelas 7A-9A</span>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 dark:text-gray-300 mb-6 text-sm leading-relaxed">Dokumen nilai siswa
+                                untuk mata pelajaran Bahasa Inggris
+                                kelas 7A hingga 9A.</p>
+                            <button
+                                class="download-btn w-full bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white py-4 rounded-xl flex items-center justify-center font-bold text-lg">
+                                <i class="fas fa-download mr-3"></i>
+                                Unduh Dokumen
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Card 5 -->
+                    <div class="card-hover glass-effect fade-in">
+                        <div class="p-7">
+                            <div class="flex items-start mb-6">
+                                <div class="icon-container text-red-500 mr-5">
+                                    <i class="fas fa-user-check text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-800 dark:text-white">Presensi Mapel</h3>
+                                    <span class="badge text-red-500 dark:text-red-300 mt-3">Kelas 9A</span>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 dark:text-gray-300 mb-6 text-sm leading-relaxed">Dokumen presensi
+                                siswa
+                                untuk mata pelajaran Bahasa Inggris
+                                kelas 9A.</p>
+                            <button
+                                class="download-btn w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white py-4 rounded-xl flex items-center justify-center font-bold text-lg">
+                                <i class="fas fa-download mr-3"></i>
+                                Unduh Dokumen
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Card 6 -->
+                    <div class="card-hover glass-effect fade-in">
+                        <div class="p-7">
+                            <div class="flex items-start mb-6">
+                                <div class="icon-container text-indigo-500 mr-5">
+                                    <i class="fas fa-tasks text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-800 dark:text-white">PROMES</h3>
+                                    <span class="badge text-indigo-500 dark:text-indigo-300 mt-3">Kelas 9A</span>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 dark:text-gray-300 mb-6 text-sm leading-relaxed">Program Semester
+                                (PROMES) untuk mata pelajaran Bahasa
+                                Inggris kelas 9A.</p>
+                            <button
+                                class="download-btn w-full bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white py-4 rounded-xl flex items-center justify-center font-bold text-lg">
+                                <i class="fas fa-download mr-3"></i>
+                                Unduh Dokumen
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Card 7 -->
+                    <div class="card-hover glass-effect fade-in">
+                        <div class="p-7">
+                            <div class="flex items-start mb-6">
+                                <div class="icon-container text-pink-500 mr-5">
+                                    <i class="fas fa-project-diagram text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-800 dark:text-white">PROTA</h3>
+                                    <span class="badge text-pink-500 dark:text-pink-300 mt-3">Kelas 9A</span>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 dark:text-gray-300 mb-6 text-sm leading-relaxed">Program Tahunan
+                                (PROTA)
+                                untuk mata pelajaran Bahasa
+                                Inggris kelas 9A.</p>
+                            <button
+                                class="download-btn w-full bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white py-4 rounded-xl flex items-center justify-center font-bold text-lg">
+                                <i class="fas fa-download mr-3"></i>
+                                Unduh Dokumen
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Card 8 -->
+                    <div class="card-hover glass-effect fade-in">
+                        <div class="p-7">
+                            <div class="flex items-start mb-6">
+                                <div class="icon-container text-teal-500 mr-5">
+                                    <i class="fas fa-book-open text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-800 dark:text-white">RPP</h3>
+                                    <span class="badge text-teal-500 dark:text-teal-300 mt-3">Kelas 9A</span>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 dark:text-gray-300 mb-6 text-sm leading-relaxed">Rencana Pelaksanaan
+                                Pembelajaran (RPP) untuk mata
+                                pelajaran Bahasa Inggris kelas 9A.</p>
+                            <button
+                                class="download-btn w-full bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white py-4 rounded-xl flex items-center justify-center font-bold text-lg">
+                                <i class="fas fa-download mr-3"></i>
+                                Unduh Dokumen
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Card 9 -->
+                    <div class="card-hover glass-effect fade-in">
+                        <div class="p-7">
+                            <div class="flex items-start mb-6">
+                                <div class="icon-container text-orange-500 mr-5">
+                                    <i class="fas fa-book text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-800 dark:text-white">Silabus</h3>
+                                    <span class="badge text-orange-500 dark:text-orange-300 mt-3">Kelas 7A</span>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 dark:text-gray-300 mb-6 text-sm leading-relaxed">Silabus untuk mata
+                                pelajaran Bahasa Inggris kelas 7A.</p>
+                            <button
+                                class="download-btn w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white py-4 rounded-xl flex items-center justify-center font-bold text-lg">
+                                <i class="fas fa-download mr-3"></i>
+                                Unduh Dokumen
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Card 10 -->
+                    <div class="card-hover glass-effect fade-in">
+                        <div class="p-7">
+                            <div class="flex items-start mb-6">
+                                <div class="icon-container text-cyan-500 mr-5">
+                                    <i class="fas fa-book text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-800 dark:text-white">Silabus</h3>
+                                    <span class="badge text-cyan-500 dark:text-cyan-300 mt-3">Kelas 8A</span>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 dark:text-gray-300 mb-6 text-sm leading-relaxed">Silabus untuk mata
+                                pelajaran Bahasa Inggris kelas 8A.</p>
+                            <button
+                                class="download-btn w-full bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white py-4 rounded-xl flex items-center justify-center font-bold text-lg">
+                                <i class="fas fa-download mr-3"></i>
+                                Unduh Dokumen
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Card 11 -->
+                    <div class="card-hover glass-effect fade-in">
+                        <div class="p-7">
+                            <div class="flex items-start mb-6">
+                                <div class="icon-container text-lime-500 mr-5">
+                                    <i class="fas fa-book text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-800 dark:text-white">Silabus</h3>
+                                    <span class="badge text-lime-500 dark:text-lime-300 mt-3">Kelas 9A</span>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 dark:text-gray-300 mb-6 text-sm leading-relaxed">Silabus untuk mata
+                                pelajaran Bahasa Inggris kelas 9A.</p>
+                            <button
+                                class="download-btn w-full bg-gradient-to-r from-lime-500 to-lime-600 hover:from-lime-600 hover:to-lime-700 text-white py-4 rounded-xl flex items-center justify-center font-bold text-lg">
+                                <i class="fas fa-download mr-3"></i>
+                                Unduh Dokumen
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="py-12 px-4 bg-gray-800 dark:bg-gray-900 text-white mt-16 relative z-10">
+            <div class="container mx-auto max-w-7xl">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="mb-6 md:mb-0 text-center md:text-left">
+                        <p class="text-gray-400 text-lg">Mata Pelajaran Bahasa Inggris</p>
+                        <p class="text-gray-400 font-medium">Mr. Yanto Rundy</p>
+                    </div>
+                    <div class="text-center md:text-right">
+                        <p class="text-gray-400 text-lg">Tahun Ajaran 2025/2026</p>
+                        <p class="text-gray-400 mt-2">© Yantho Rundy - All Rights Reserved</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Daftar link dalam array sesuai urutan card di HTML
+        const fileLinksArray = [
+            "https://drive.google.com/uc?export=download&id=1oqsMfewMtFIJiU4dQp5bncA5c46Usx76", // Analisis
+            "https://drive.google.com/uc?export=download&id=1l7wxDAcZWIA2pn0GTKNbWNqXHkb1h7zq", // Kalender
+            "https://drive.google.com/uc?export=download&id=1vvGx-mYaIoNDvMFtc9cvK0xtFtsfGiT-", // Lampiran
+            "https://drive.google.com/uc?export=download&id=1orgf6bLYOqJJa6ZgrV1fXOdGpvdiFirz", // Nilai
+            "https://drive.google.com/uc?export=download&id=1y2iGxssFiHGLYJYep8UIriVfJTyHIrhI", // Presensi
+            "https://drive.google.com/uc?export=download&id=1-QJNPhIMSf9TikZi45ErLG70EJeWQUCo", // PROMES
+            "https://drive.google.com/uc?export=download&id=1VZI7EExiKOlHV6X7GBR5PvwJUW1ycZ3N", // PROTA
+            "https://drive.google.com/uc?export=download&id=1kARHC5EAJHtVjnQesajKsqxCbxg_btOR", // RPP
+            "https://drive.google.com/uc?export=download&id=1ecaCM9UE2D4lhJOgAW8F781h4QYd_hBT", // Silabus 7A
+            "https://drive.google.com/uc?export=download&id=1ipj-0a-PG2DIaLKyTt5tfG0OZbg9iGQy", // Silabus 8A
+            "https://drive.google.com/uc?export=download&id=1w4b2P6eakjEK0u_bykvJ56LuBClUNIEq"  // Silabus 9A
+        ];
+
+        // Loading Screen Animation Elements
+        function createLoadingParticles() {
+            const container = document.getElementById('particles');
+            const particleCount = 30;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+
+                const size = Math.random() * 6 + 2;
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                const delay = Math.random() * 20;
+                const duration = Math.random() * 10 + 10;
+
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${posX}%`;
+                particle.style.top = `${posY}%`;
+                particle.style.animation = `float ${duration}s ease-in-out ${delay}s infinite`;
+                particle.style.opacity = Math.random() * 0.6 + 0.2;
+
+                container.appendChild(particle);
+            }
+        }
+
+        function createQuantumDots() {
+            const quantumContainer = document.getElementById('quantumDots');
+            for (let i = 0; i < 30; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'quantum-dot';
+                dot.style.left = Math.random() * 100 + 'vw';
+                dot.style.top = Math.random() * 100 + 'vh';
+                dot.style.setProperty('--tx', (Math.random() - 0.5) * 200 + 'px');
+                dot.style.setProperty('--ty', (Math.random() - 0.5) * 200 + 'px');
+                dot.style.animationDelay = Math.random() * 8 + 's';
+                quantumContainer.appendChild(dot);
+            }
+        }
+
+        function createDataStream() {
+            const dataContainer = document.getElementById('dataStream');
+            for (let i = 0; i < 40; i++) {
+                const byte = document.createElement('div');
+                byte.className = 'data-byte';
+                byte.style.animationDelay = (i * 0.05) + 's';
+                dataContainer.appendChild(byte);
+            }
+        }
+
+        function updateTime() {
+            const timeDisplay = document.getElementById('timeDisplay');
+            const now = new Date();
+            const timeString = now.toISOString().substr(11, 8).replace(/:/g, ' : ');
+            timeDisplay.textContent = `QUANTUM TIME : ${timeString}`;
+        }
+
+        // Main Content Functions
+        function createParticles() {
+            const container = document.getElementById('particles-container');
+            const particleCount = 30;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+
+                const size = Math.random() * 6 + 2;
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                const delay = Math.random() * 20;
+                const duration = Math.random() * 10 + 10;
+
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${posX}%`;
+                particle.style.top = `${posY}%`;
+                particle.style.animation = `floating ${duration}s ease-in-out ${delay}s infinite`;
+                particle.style.opacity = Math.random() * 0.6 + 0.2;
+
+                container.appendChild(particle);
+            }
+        }
+
+        // Initialize Loading Screen
+        document.addEventListener('DOMContentLoaded', function () {
+            // Setup loading screen
+            createLoadingParticles();
+            createQuantumDots();
+            createDataStream();
+            setInterval(updateTime, 1000);
+            updateTime();
+
+            // Show loading screen for 5 seconds, then show main content
+            setTimeout(() => {
+                const loadingScreen = document.getElementById('loadingScreen');
+                const mainContent = document.getElementById('mainContent');
+
+                // Fade out loading screen
+                loadingScreen.style.opacity = '0';
+                loadingScreen.style.transition = 'opacity 1s ease';
+
+                setTimeout(() => {
+                    // Hide loading screen and show main content
+                    loadingScreen.style.display = 'none';
+                    mainContent.style.display = 'block';
+
+                    // Initialize main content
+                    createParticles();
+
+                    // Animate progress bars
+                    setTimeout(() => {
+                        document.querySelectorAll('.progress-fill').forEach(bar => {
+                            bar.style.width = bar.style.width;
+                        });
+                    }, 500);
+
+                    // Add event listeners for download buttons
+                    document.querySelectorAll('.download-btn').forEach((button, index) => {
+                        button.addEventListener('click', function () {
+                            const card = this.closest('.card-hover');
+                            const cardTitle = card.querySelector('h3').textContent;
+                            const badgeText = card.querySelector('.badge').textContent;
+
+                            const fileName = cardTitle + (badgeText ? " " + badgeText : "");
+
+                            if (fileLinksArray[index]) {
+                                // Membuat elemen <a> sementara untuk mengunduh file
+                                const downloadLink = document.createElement('a');
+                                downloadLink.href = fileLinksArray[index];
+                                downloadLink.target = '_blank';
+                                downloadLink.download = fileName + '.pdf';
+                                document.body.appendChild(downloadLink);
+                                downloadLink.click();
+                                document.body.removeChild(downloadLink);
+
+                                // Animasi feedback
+                                const originalText = this.innerHTML;
+                                this.innerHTML = '<i class="fas fa-check mr-3"></i> Berhasil Diunduh';
+                                this.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                                this.disabled = true;
+
+                                setTimeout(() => {
+                                    this.innerHTML = originalText;
+                                    this.style.background = '';
+                                    this.disabled = false;
+                                }, 2000);
+                            } else {
+                                alert('Link untuk ' + fileName + ' belum tersedia.');
+                            }
+                        });
+                    });
+
+                    // Dark Mode Toggle
+                    const themeToggle = document.getElementById('theme-toggle');
+                    const themeIcon = themeToggle.querySelector('i');
+
+                    themeToggle.addEventListener('click', () => {
+                        document.documentElement.classList.toggle('dark');
+
+                        if (document.documentElement.classList.contains('dark')) {
+                            themeIcon.classList.remove('fa-moon');
+                            themeIcon.classList.add('fa-sun');
+                        } else {
+                            themeIcon.classList.remove('fa-sun');
+                            themeIcon.classList.add('fa-moon');
+                        }
+                    });
+                }, 1000);
+            }, 7000); // 5 seconds loading time
+        });
+    </script>
+</body>
+
+</html>
